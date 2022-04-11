@@ -37,6 +37,23 @@
 (defn -basic-credentials-provider [conf]
   (create-provider (creds/basic-credentials-provider conf)))
 
+(defn -kludge-full-basic-credentials-provider
+  "Given a map with :access-key-id and :secret-access-key,
+  returns an implementation of CredentialsProvider which returns
+  those credentials on fetch.
+
+  - Ben: Added session token "
+  [{:keys [access-key-id secret-access-key session-token]}]
+  (assert access-key-id "Missing")
+  (assert secret-access-key "Missing")
+  (create-provider
+   (reify CredentialsProvider
+     (fetch [_]
+       {:aws/access-key-id access-key-id
+        :aws/secret-access-key secret-access-key
+        :aws/session-token session-token}))))
+
+
 (defn -environment-credentials-provider []
   (create-provider (creds/environment-credentials-provider)))
 
@@ -195,7 +212,8 @@
    '-system-property-credentials-provider -system-property-credentials-provider
    '-profile-credentials-provider -profile-credentials-provider
    '-credential-process-credentials-provider -credential-process-credentials-provider
-   '-default-credentials-provider -default-credentials-provider})
+   '-default-credentials-provider -default-credentials-provider
+   '-kludge-full-basic-credentials-provider -kludge-full-basic-credentials-provider})
 
 (require 'cognitect.aws.ec2-metadata-utils)
 
@@ -232,6 +250,11 @@
             :code (pr-str
                    '(defn basic-credentials-provider [conf]
                       (-basic-credentials-provider conf)))}
+
+           {:name "kludge-full-basic-credentials-provider"
+            :code (pr-str
+                   '(defn kludge-full-basic-credentials-provider [conf]
+                      (-kludge-full-basic-credentials-provider conf)))}
 
            {:name "system-property-credentials-provider"
             :code (pr-str

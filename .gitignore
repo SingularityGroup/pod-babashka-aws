@@ -7,3 +7,4 @@ classes
 /pod-babashka-aws.jar
 /.clj-kondo/.cache
 /.lsp/.cache
+/.nrepl-port

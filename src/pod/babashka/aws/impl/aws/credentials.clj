@@ -47,7 +47,7 @@
   (assert access-key-id "Missing")
   (assert secret-access-key "Missing")
   (create-provider
-   (reify CredentialsProvider
+   (reify creds/CredentialsProvider
      (fetch [_]
        {:aws/access-key-id access-key-id
         :aws/secret-access-key secret-access-key
@@ -127,7 +127,7 @@
         :else (do
                 (.write buf c)
                 (recur s in-double-quotes? in-single-quotes? buf parsed))))))
-                
+
 ;  (is (= [] (split-arguments-string "")))
 ;  (is (= ["hello"] (split-arguments-string "hello")))
 ;  (is (= ["hello" "world"] (split-arguments-string "  hello   world ")))
